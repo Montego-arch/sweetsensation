@@ -27,6 +27,8 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/sweetsensation/css/sweetsensation.css"
 # app_include_js = "/assets/sweetsensation/js/sweetsensation.js"
+app_include_js = "/assets/sweetsensation/js/material_request.js"
+app_include_js = "/assets/sweetsensation/js/material_request_item.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/sweetsensation/css/sweetsensation.css"
@@ -144,7 +146,18 @@ app_license = "mit"
 # 		"on_trash": "method"
 # 	}
 # }
-
+doc_events = {
+    "Material Request": {
+        "validate": [
+			"sweetsensation.api.validate_item_groups",
+			]
+    },
+	"Work Order": {
+        "before_insert": [
+            "sweetsensation.api.assign_warehouses"
+        ]
+    }
+}
 # Scheduled Tasks
 # ---------------
 
