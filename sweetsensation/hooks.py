@@ -154,9 +154,14 @@ doc_events = {
     },
 	"Work Order": {
         "before_insert": [
-            "sweetsensation.api.assign_warehouses"
+            "sweetsensation.api.assign_warehouses",
+			"sweetsensation.api.assign_work_order_warehouses"
         ]
-    }
+    },
+	"Warehouse": {
+        "validate": "sweetsensation.api.validate_warehouse_rules"
+    },
+
 }
 # Scheduled Tasks
 # ---------------

@@ -72,3 +72,114 @@ def assign_warehouses(doc, method=None):
 
 def validate(doc, method):
     assign_warehouses(doc)
+
+
+
+
+import frappe
+
+# -----------------------------
+# Helper Functions
+# -----------------------------
+
+def find_warehouse(branch, pattern):
+    """Return a single warehouse matching custom_branch + name like pattern."""
+    return frappe.get_all(
+        "Warehouse",
+        fields=["name"],
+        filters=[
+            ["custom_branch", "=", branch],
+            ["LOWER(name)", "like", f"%{pattern.lower()}%"]
+        ],
+        limit=1
+    )
+
+def check_unique_warehouse(doc, keyword, error_message):
+    """Ensure only ONE warehouse of each type exists per branch."""
+    exists = frappe.db.sql("""
+        SELECT name 
+        FROM `tabWarehouse`
+        WHERE custom_branch = %s
+          AND LOWER(name) LIKE %s
+          AND name != %s
+        LIMIT 1
+    """, (doc.custom_branch, f"%{keyword.lower()}%", doc.name))
+
+    if exists:
+        frappe.throw(error_message)
+
+
+# -----------------------------
+# EVENT: Warehouse Before Save
+# -----------------------------
+
+def validate_warehouse_rules(doc, method=None):
+    """Warehouse uniqueness + branch-level restrictions."""
+
+    warehouse_lower = doc.warehouse_name.lower()
+
+    # ---- Unique Outlet Rule ----
+    if "outlet" in warehouse_lower:
+        check_unique_warehouse(
+            doc,
+            "outlet",
+            "An outlet already exists for this branch. Branches must have only ONE outlet warehouse."
+        )
+
+    # ---- Unique Transit Warehouse ----
+    if "transit" in warehouse_lower:
+        check_unique_warehouse(
+            doc,
+            "transit",
+            "A transit warehouse already exists for this branch. Branches must have only ONE transit warehouse."
+        )
+
+    # ---- Unique Restaurant ----
+    if "restaurant" in warehouse_lower:
+        check_unique_warehouse(
+            doc,
+            "restaurant",
+            "A restaurant already exists for this branch. Only ONE restaurant per branch is allowed."
+        )
+
+    # No field assignment is required here — this is only validation.
+    # Done.
+
+
+# -----------------------------
+# EVENT: Work Order Before Insert
+# -----------------------------
+
+def assign_work_order_warehouses(doc, method=None):
+    """
+    Sets warehouses for Work Order created from Production Plan:
+      - Source: Warehouse containing 'production'
+      - Target: Warehouse containing 'restaurant'
+    """
+
+    if not doc.custom_branch:
+        return
+
+    # Find source warehouse (Production)
+    source = find_warehouse(doc.custom_branch, "production")
+
+    if not source:
+        frappe.throw("Branch on Production Plan is not linked to any Production warehouse.")
+
+    # Find target warehouse (Restaurant)
+    target = find_warehouse(doc.custom_branch, "restaurant")
+
+    if not target:
+        frappe.throw("Branch on Production Plan is not linked to any Restaurant warehouse.")
+
+    source_wh = source[0].name
+    target_wh = target[0].name
+
+    # Assign to Work Order
+    doc.source_warehouse = source_wh
+    doc.fg_warehouse = target_wh  # Finished goods / target warehouse
+
+    # Assign source warehouse to required items table
+    if source_wh:
+        for row in doc.required_items:
+            row.source_warehouse = source_wh
