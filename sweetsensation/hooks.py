@@ -29,6 +29,7 @@ app_license = "mit"
 # app_include_js = "/assets/sweetsensation/js/sweetsensation.js"
 app_include_js = "/assets/sweetsensation/js/material_request.js"
 app_include_js = "/assets/sweetsensation/js/material_request_item.js"
+app_include_js = "/assets/sweetsensation/js/production_plan.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/sweetsensation/css/sweetsensation.css"
@@ -135,6 +136,11 @@ app_include_js = "/assets/sweetsensation/js/material_request_item.js"
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
+override_doctype_class = {
+	"Production Plan": "sweetsensation.overrides.production_plan.CustomProductionPlan"
+}
+
+
 # Document Events
 # ---------------
 # Hook on document methods and events
@@ -155,7 +161,7 @@ doc_events = {
 	"Work Order": {
         "before_insert": [
             "sweetsensation.api.assign_warehouses",
-			"sweetsensation.api.assign_work_order_warehouses"
+			# "sweetsensation.api.assign_work_order_warehouses"
         ]
     },
 	"Warehouse": {
