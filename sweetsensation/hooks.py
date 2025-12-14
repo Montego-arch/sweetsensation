@@ -152,23 +152,23 @@ override_doctype_class = {
 # 		"on_trash": "method"
 # 	}
 # }
-doc_events = {
-    "Material Request": {
-        "validate": [
-			"sweetsensation.api.validate_item_groups",
-			]
-    },
-	"Work Order": {
-        "before_insert": [
-            "sweetsensation.api.assign_warehouses",
-			# "sweetsensation.api.assign_work_order_warehouses"
-        ]
-    },
-	"Warehouse": {
-        "validate": "sweetsensation.api.validate_warehouse_rules"
-    },
+# doc_events = {
+#     "Material Request": {
+#         "validate": [
+# 			"sweetsensation.api.validate_item_groups",
+# 			]
+#     },
+# 	"Work Order": {
+#         "before_insert": [
+#             "sweetsensation.api.assign_warehouses",
+# 			# "sweetsensation.api.assign_work_order_warehouses"
+#         ]
+#     },
+# 	"Warehouse": {
+#         "validate": "sweetsensation.api.validate_warehouse_rules"
+#     },
 
-}
+# }
 # Scheduled Tasks
 # ---------------
 
