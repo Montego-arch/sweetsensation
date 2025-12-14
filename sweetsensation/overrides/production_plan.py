@@ -21,7 +21,7 @@ class CustomProductionPlan(Document):
                 "item_code": rm.item_code,
                 "qty": rm.required_qty or rm.quantity or 0,
                 "uom": rm.uom,
-                "stock_uom": rm.stock_uom or rm.uom,
+                # "stock_uom": rm.stock_uom or rm.uom,
                 # "s_warehouse": default_source,
                 # "t_warehouse": default_target
             })
