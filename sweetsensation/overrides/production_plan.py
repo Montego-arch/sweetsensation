@@ -13,8 +13,8 @@ class CustomProductionPlan(Document):
         se.company = self.company
 
         # optional: set default source & target warehouses
-        default_source = frappe.db.get_single_value("Stock Settings", "default_warehouse")
-        default_target = frappe.db.get_single_value("Stock Settings", "default_target_warehouse")
+        # default_source = frappe.db.get_single_value("Stock Settings", "default_warehouse")
+        # default_target = frappe.db.get_single_value("Stock Settings", "default_target_warehouse")
 
         for rm in self.mr_items:   # Production Plan Raw Materials table
             se.append("mr_items", {
@@ -22,8 +22,8 @@ class CustomProductionPlan(Document):
                 "qty": rm.required_qty or rm.quantity or 0,
                 "uom": rm.uom,
                 "stock_uom": rm.stock_uom or rm.uom,
-                "s_warehouse": default_source,
-                "t_warehouse": default_target
+                # "s_warehouse": default_source,
+                # "t_warehouse": default_target
             })
 
         se.save(ignore_permissions=True)
