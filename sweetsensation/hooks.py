@@ -152,6 +152,11 @@ override_doctype_class = {
 # 		"on_trash": "method"
 # 	}
 # }
+doc_events = {
+    "Stock Entry": {
+        "validate": "aarano.overrides.stock_entry.override_difference_account"
+    }
+}
 # doc_events = {
 #     "Material Request": {
 #         "validate": [
